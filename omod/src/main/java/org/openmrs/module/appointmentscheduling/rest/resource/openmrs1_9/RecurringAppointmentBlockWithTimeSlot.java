@@ -2,7 +2,10 @@ package org.openmrs.module.appointmentscheduling.rest.resource.openmrs1_9;
 
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Calendar;
+
+import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appointmentscheduling.AppointmentBlock;
 import org.openmrs.module.appointmentscheduling.TimeSlot;
@@ -29,7 +32,7 @@ public class RecurringAppointmentBlockWithTimeSlot extends AppointmentBlockResou
 	@Override
 	
 	// TODO does this actually make this transactional? probably not?
-	public AppointmentBlock save(AppointmentBlock appointmentBlock) {
+	public AppointmentBlock save(AppointmentBlock appointmentBlock)  {
 
             Date d1= appointmentBlock.getStartDate();
             Date d2 = appointmentBlock.getEndDate();
@@ -37,10 +40,9 @@ public class RecurringAppointmentBlockWithTimeSlot extends AppointmentBlockResou
             startdate.setTime(d1);
             Calendar enddate = Calendar.getInstance(); 
             enddate.setTime(d2);
-//            startdate.set(Calendar.HOUR, 00);
-//            startdate.set(Calendar.MINUTE, 00);
-//            enddate.set(Calendar.HOUR, 00);
-//            enddate.set(Calendar.MINUTE, 00);
+           if( appointmentBlock.getDaysToSchedule() == null) {
+        	   throw new APIException("DaysToSchedule cannot be empty, atleast one day required");
+           }
             
             
             Calendar tempdate = Calendar.getInstance();
@@ -51,6 +53,7 @@ public class RecurringAppointmentBlockWithTimeSlot extends AppointmentBlockResou
             int endmin = enddate.get(Calendar.MINUTE);
             
             while(enddate.compareTo(startdate)>=0){
+            	if(appointmentBlock.getDaysToSchedule().contains(startdate.get(Calendar.DAY_OF_WEEK))) {
             	AppointmentBlock app = new AppointmentBlock();
             	startdate.set(Calendar.HOUR_OF_DAY, starthour);
                 startdate.set(Calendar.MINUTE, startmin);
@@ -68,10 +71,9 @@ public class RecurringAppointmentBlockWithTimeSlot extends AppointmentBlockResou
                 d2 = tempdate.getTime();
                 app.setEndDate(d2);
                 AppointmentBlock appointments =Context.getService(AppointmentService.class).saveAppointmentBlock(app);
-            	
-                startdate.add(Calendar.DATE, 1);
-                
                 multisave(appointments);
+            	}
+                startdate.add(Calendar.DATE, 1);
                 Context.flushSession();
             
             }

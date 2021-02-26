@@ -38,6 +38,9 @@ public class AppointmentBlock extends BaseOpenmrsData {
 	
 	private String ismulti = "NO";
 	
+	private Set<Integer> daysToSchedule;
+	
+	
 	public AppointmentBlock() {
 		
 	}
@@ -125,5 +128,14 @@ public class AppointmentBlock extends BaseOpenmrsData {
 	    public void setIsmulti(String ismulti) {
 	        this.ismulti = ismulti;
 	    }
+
+		public Set<Integer> getDaysToSchedule() {
+			return daysToSchedule;
+		}
+
+		public void setDaysToSchedule(Set<Integer> daysToSchedule) {
+			this.daysToSchedule = daysToSchedule;
+		}
+	    
 	
 }

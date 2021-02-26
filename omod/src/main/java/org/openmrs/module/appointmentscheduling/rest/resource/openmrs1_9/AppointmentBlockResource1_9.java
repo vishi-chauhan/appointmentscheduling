@@ -68,6 +68,7 @@ public class AppointmentBlockResource1_9 extends DataDelegatingCrudResource<Appo
 		description.addRequiredProperty("types");
 		description.addProperty("provider");
 		description.addProperty("ismulti");
+		description.addProperty("daysToSchedule");
 		return description;
 	}
 
